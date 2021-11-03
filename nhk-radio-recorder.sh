@@ -23,6 +23,7 @@ esac
 avconv -i "${PLAYPATH}" \
        -t "${DURATION}" \
        -y \
+       -bsf:a aac_adtstoasc \
        -c copy "${TMPDIR}/${CHANNEL}_${DATE}.m4a"
 
 mv "${TMPDIR}/${CHANNEL}_${DATE}.m4a" "${OUTDIRLOCAL}/"
