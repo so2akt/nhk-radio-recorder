@@ -67,7 +67,7 @@ if [ ! -f "$OUTDIRLOCAL/$OUTFILE" ]; then
   exit 1
 fi
 
-# ===== copy to remote directory =====
-cp "$OUTDIRLOCAL/$OUTFILE" "$OUTDIR/"
+# ===== move to remote directory =====
+mv "$OUTDIRLOCAL/$OUTFILE" "$OUTDIR/"
 
 echo "done: $OUTFILE"
