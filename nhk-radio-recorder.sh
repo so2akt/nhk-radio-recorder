@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# ===== 設定 =====
+# ===== settings =====
 DATE=$(date '+%Y%m%d_%H%M')
 XML_URL="https://www.nhk.or.jp/radio/config/config_web.xml"
 
-# ===== 引数チェック =====
+# ===== argument check =====
 if [ $# -ne 4 ]; then
   echo "usage: $0 channel(r1|r2|fm) duration(min) localdir remotedir"
   exit 1
@@ -15,7 +15,7 @@ DURATION=$(($2 * 60))
 OUTDIRLOCAL="$3"
 OUTDIR="$4"
 
-# ===== XML取得 =====
+# ===== get XML =====
 XML=$(curl -s "$XML_URL")
 
 extract_url() {
@@ -47,11 +47,11 @@ fi
 
 echo "M3U8: $PLAYPATH"
 
-# ===== 出力 =====
+# ===== output =====
 OUTFILE="${CHANNEL}_${DATE}.m4a"
 mkdir -p "$OUTDIRLOCAL"
 
-# ===== 録音（これが本命） =====
+# ===== recording =====
 ffmpeg -loglevel error \
   -headers "User-Agent: Mozilla/5.0" \
   -i "$PLAYPATH" \
@@ -61,13 +61,13 @@ ffmpeg -loglevel error \
   -y \
   "$OUTDIRLOCAL/$OUTFILE"
 
-# ===== 録音確認 =====
+# ===== confirm recording =====
 if [ ! -f "$OUTDIRLOCAL/$OUTFILE" ]; then
   echo "record failed"
   exit 1
 fi
 
-# ===== NAS転送 =====
+# ===== copy to remote directory =====
 cp "$OUTDIRLOCAL/$OUTFILE" "$OUTDIR/"
 
 echo "done: $OUTFILE"
