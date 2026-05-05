@@ -6,7 +6,7 @@ XML_URL="https://www.nhk.or.jp/radio/config/config_web.xml"
 
 # ===== argument check =====
 if [ $# -ne 4 ]; then
-  echo "usage: $0 channel(r1|r2|fm) duration(min) localdir remotedir"
+  echo "usage: $0 channel(r1|fm) duration(min) localdir remotedir"
   exit 1
 fi
 
@@ -26,9 +26,10 @@ case "$CHANNEL" in
   r1)
     LINE=$(echo "$XML" | grep 'r1hls' | head -n1)
     ;;
-  r2)
-    LINE=$(echo "$XML" | grep 'r2hls' | head -n1)
-    ;;
+# r2 is stopped since 2026-03-30
+#  r2)
+#    LINE=$(echo "$XML" | grep 'r2hls' | head -n1)
+#    ;;
   fm)
     LINE=$(echo "$XML" | grep 'fmhls' | head -n1)
     ;;
