@@ -5,7 +5,7 @@ DATE=$(date '+%Y%m%d_%H%M')
 XML_URL="https://www.nhk.or.jp/radio/config/config_web.xml"
 
 # ===== area setting =====
-AREA="130"   # tokyo, if other area, please refer to https://www.nhk.or.jp/radio/config/config_web.xml
+AREA="tokyo"   # tokyo, if other area, please refer to https://www.nhk.or.jp/radio/config/config_web.xml
 
 # ===== argument check =====
 if [ $# -ne 4 ]; then
@@ -26,7 +26,12 @@ extract_url() {
 }
 
 # ===== extract area block =====
-AREA_BLOCK=$(echo "$XML" | awk "/<areacode>${AREA}<\/areacode>/,/<\/area>/")
+AREA_BLOCK=$(echo "$XML" | tr -d '\n' | sed 's#</area>#</area>\n#g' | grep "<area>${AREA}</area>")
+
+if [ -z "$AREA_BLOCK" ]; then
+  echo "failed to find area block (area=${AREA})"
+  exit 1
+fi
 
 # ===== select channel =====
 case "$CHANNEL" in
