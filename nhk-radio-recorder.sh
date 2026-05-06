@@ -4,6 +4,9 @@
 DATE=$(date '+%Y%m%d_%H%M')
 XML_URL="https://www.nhk.or.jp/radio/config/config_web.xml"
 
+# ===== area setting =====
+AREA="130"   # tokyo, if other area, please refer to https://www.nhk.or.jp/radio/config/config_web.xml
+
 # ===== argument check =====
 if [ $# -ne 4 ]; then
   echo "usage: $0 channel(r1|fm) duration(min) localdir remotedir"
@@ -22,16 +25,20 @@ extract_url() {
   echo "$1" | sed -E 's/.*CDATA\[([^]]+)\].*/\1/'
 }
 
+# ===== extract area block =====
+AREA_BLOCK=$(echo "$XML" | awk "/<areacode>${AREA}<\/areacode>/,/<\/area>/")
+
+# ===== select channel =====
 case "$CHANNEL" in
   r1)
-    LINE=$(echo "$XML" | grep 'r1hls' | head -n1)
+    LINE=$(echo "$AREA_BLOCK" | grep 'r1hls' | head -n1)
     ;;
 # r2 is stopped since 2026-03-30
 #  r2)
-#    LINE=$(echo "$XML" | grep 'r2hls' | head -n1)
+#    LINE=$(echo "$AREA_BLOCK" | grep 'r2hls' | head -n1)
 #    ;;
   fm)
-    LINE=$(echo "$XML" | grep 'fmhls' | head -n1)
+    LINE=$(echo "$AREA_BLOCK" | grep 'fmhls' | head -n1)
     ;;
   *)
     echo "invalid channel"
@@ -42,10 +49,11 @@ esac
 PLAYPATH=$(extract_url "$LINE")
 
 if [ -z "$PLAYPATH" ]; then
-  echo "failed to get m3u8"
+  echo "failed to get m3u8 (area=${AREA})"
   exit 1
 fi
 
+echo "AREA: $AREA"
 echo "M3U8: $PLAYPATH"
 
 # ===== output =====
